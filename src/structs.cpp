@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-
+#include <algorithm>
 using namespace std;
 
 struct  nodo
@@ -47,6 +47,10 @@ struct  instancia
    vector<vector <float>> riesgo_C;
    vector<vector <float>> riesgo_D;
    vector<vector <float>> riesgo_E;
+   //matriz de incompatibilidad
+   vector<vector<int>> incompatibilidad;
+   //ponderador de objetivos
+   float alpha;
 };
 
 struct solucion

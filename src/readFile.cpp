@@ -76,7 +76,9 @@ instancia leer_instancia(string nombre_instancia){
     //------------DISTANCIAS -----------
     //distancia depot 
     getline(infile, line);
-    inst.distancia_depot = stringToVector(line, ' ');
+    dummy_vector = stringToVector(line, ' ');
+    dummy_vector.erase(dummy_vector.begin());
+    inst.distancia_depot = dummy_vector;
     //distancia matrices
     inst.distancias_A = leerMatriz(cant_nodos, &infile);
     inst.distancias_B = leerMatriz(cant_nodos, &infile);
