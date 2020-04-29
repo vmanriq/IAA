@@ -1,6 +1,3 @@
-#include "structs.cpp"
-
-
 //realiza split sobre string segun delimiter y devuelve un vector con los elementos int 
 vector<float> stringToVector(string input, char delimiter){
     vector<float> splitStr;
@@ -63,6 +60,7 @@ instancia leer_instancia(string nombre_instancia){
     //cantidad nodos 
     getline(infile, line);
     cant_nodos = stoi(line);
+    inst.cant_nodos = cant_nodos;
     //se rellenan los nodos
     vector<nodo> nodos;
     for(int i = 0; i < cant_nodos; i++){
@@ -71,6 +69,7 @@ instancia leer_instancia(string nombre_instancia){
         dummy_nodo.id = dummy_vector[0];
         dummy_nodo.cantidad_material = dummy_vector[1];
         dummy_nodo.tipo_material = dummy_vector[2];
+        dummy_nodo.visitado = false;
         nodos.push_back(dummy_nodo);
     }
     inst.nodos = nodos;
@@ -92,17 +91,4 @@ instancia leer_instancia(string nombre_instancia){
     inst.riesgo_E = leerMatriz(cant_nodos, &infile);
     return inst;
 
-}
-
-
-int main(int argc, char const *argv[])
-{
-    // if(argc == 0 ){
-    //     cout << "Faltan argumentos" << endl;
-    //     return 1;
-    // }
-    /* code */
-    //float alpha = stof(argv[1]);
-    struct instancia inst = leer_instancia("Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat");
-    return 0;
 }
