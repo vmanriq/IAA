@@ -3,11 +3,13 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <string>
 using namespace std;
 
 struct  nodo
 {
     int id;
+    int idx;
     int tipo_material;
     int cantidad_material;
     bool visitado;
@@ -36,17 +38,12 @@ struct  instancia
    //distancias camion vacio
    vector<float> distancia_depot;
    //distancias de cada elemento 
-   vector<vector <float>> distancias_A;
-   vector<vector <float>> distancias_B;
-   vector<vector <float>> distancias_C;
-   vector<vector <float>> distancias_D;
-   vector<vector <float>> distancias_E;
+   vector<vector<vector <float>>> distancias;
    //riesgo de cada elemento segun posicion
-   vector<vector <float>> riesgo_A;
-   vector<vector <float>> riesgo_B;
-   vector<vector <float>> riesgo_C;
-   vector<vector <float>> riesgo_D;
-   vector<vector <float>> riesgo_E;
+   vector<vector<vector <float>>> riesgos;
+   //----------------ponderado de cada elemento
+ //  vector<vector<vector <float>>> ponderados;
+   
    //matriz de incompatibilidad
    vector<vector<int>> incompatibilidad;
    //ponderador de objetivos
@@ -56,7 +53,7 @@ struct  instancia
 struct solucion
 {
     //calidad de la solucion
-    float fitness;
+    float fitness_Total, fitness_riesgo, fitness_camino;
     //flota de camiones con sus rutas 
     vector<camion> camiones;
 };
