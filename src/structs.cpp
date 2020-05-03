@@ -53,7 +53,7 @@ struct  instancia
 struct solucion
 {
     //calidad de la solucion
-    float fitness_Total, fitness_riesgo, fitness_camino;
+    float  fitness_riesgo, fitness_camino;
     //flota de camiones con sus rutas 
     vector<camion> camiones;
 };

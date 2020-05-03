@@ -56,45 +56,40 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
     vector <camion> cam = camiones;
     struct camion aux_cam;
     float best_riesgo ,best_dist, best_obj = 10000000;
-    float obj_act;
+    float dist_act, riesgo_act;
     int best_idx;
     //recorre nodos se salta el primero por que es el depot
     for(int i = 1; i < (int)nodos.size(); i++){
-        best_obj = 10000000;
+        best_obj = 1000000000;
         //Recorre camiones
         for(int j = 0; j < (int)cam.size(); j++){
             aux_cam = cam[j];
+            riesgo_act = 0;
+            dist_act = 0;
             //si es que no es compatible no se considera 
             if(!checkCompatibility(aux_cam, nodos[i], inst)){
                 continue;
             }
-            obj_act = 0;
             //no ha salido del depot
             if (aux_cam.riesgo_max == 0){
-                obj_act = (1-inst.alpha)*inst.distancia_depot[i];
+                dist_act = (1-inst.alpha)*inst.distancia_depot[i];
             }
             else if (aux_cam.riesgo_max != 0){
-                obj_act = (inst.alpha)*inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i]+
-                          (1-inst.alpha)*inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
+                riesgo_act = inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
+                dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
             }
             //si el camion lo hace mejor 
-            if(obj_act < best_obj){
-                best_obj = obj_act;
+            if(inst.alpha*riesgo_act+(1-inst.alpha)*dist_act < best_obj){
                 best_idx = j;
-                if(aux_cam.riesgo_max == 0){ 
-                    best_dist = best_obj;
-                }
-                else{
-                    best_riesgo  = (inst.alpha)*inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
-                    best_dist  = (1-inst.alpha)*inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
-                }
+                best_obj = inst.alpha*riesgo_act+(1-inst.alpha)*dist_act;
+                best_dist = dist_act;
+                best_riesgo = riesgo_act;
             }
         }
         //EL CAMION VISITA EL NODO
         visitarNodo(&cam[best_idx], nodos[i]);
         sol->fitness_camino += best_dist;
         sol->fitness_riesgo += best_riesgo;
-        sol->fitness_Total += best_obj;
     }
     //se vuelve al depot
     for(int j = 0; j < (int)cam.size(); j++){
@@ -104,10 +99,8 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
             continue;
         }
         else{
-            sol->fitness_camino += (1-inst.alpha)*inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
-            sol->fitness_riesgo += (inst.alpha)*inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
-            sol->fitness_Total += (1-inst.alpha)*inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0]+
-                                  (inst.alpha)*inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
+            sol->fitness_camino += inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
+            sol->fitness_riesgo += inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
             visitarNodo(&cam[j], nodos[0]);
         }
 
@@ -154,7 +147,6 @@ int main(int argc, char const *argv[])
     cout << "alpha " << inst.alpha << endl; 
     cout << "Z1 " << sol.fitness_riesgo << endl;
     cout << "Z2 " << sol.fitness_camino << endl;
-    cout << "Total " << sol.fitness_Total << endl;
 
     return 0;
 }
