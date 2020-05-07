@@ -2,7 +2,9 @@
 #include "readFile.cpp"
 
 
-
+float normalizeComp(float fun, float max){
+    return (fun)/(max);
+}
 
 void visitarNodo(camion * cam, nodo nod){
     cam->ruta.push_back(nod.idx);
@@ -49,7 +51,6 @@ bool checkCompatibility(camion cam,nodo nod ,instancia inst){
 }
 
 void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
-    sol->fitness_Total = 0;
     sol->fitness_riesgo = 0;
     sol->fitness_camino = 0;
     vector<nodo> nodos = inst.nodos;
@@ -72,16 +73,16 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
             }
             //no ha salido del depot
             if (aux_cam.riesgo_max == 0){
-                dist_act = (1-inst.alpha)*inst.distancia_depot[i];
+                dist_act = inst.distancia_depot[i];
             }
             else if (aux_cam.riesgo_max != 0){
                 riesgo_act = inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
                 dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
             }
             //si el camion lo hace mejor 
-            if(inst.alpha*riesgo_act+(1-inst.alpha)*dist_act < best_obj){
+            if(inst.alpha*normalizeComp(riesgo_act, 528548)+(1-inst.alpha)*normalizeComp(dist_act,90324) < best_obj){
                 best_idx = j;
-                best_obj = inst.alpha*riesgo_act+(1-inst.alpha)*dist_act;
+                best_obj = inst.alpha*normalizeComp(riesgo_act, 528548)+(1-inst.alpha)*normalizeComp(dist_act,90324);
                 best_dist = dist_act;
                 best_riesgo = riesgo_act;
             }
@@ -124,13 +125,27 @@ solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
     sol.camiones = camiones;
     //------------------gredy-----------------------------------------------
     bestInsertionH(inst, camiones, &sol);
-    
     return sol;
+}
+
+void displaySol(solucion sol, instancia inst){
+    struct camion cam;
+    cout << "Las rutas son: "<< endl;
+    for(int i = 0; i < (int)sol.camiones.size();i++){
+        cam = sol.camiones[i];
+        cout<< "La ruta del camion " << i << " es : ";
+        for(int j = 0 ; j < (int)cam.ruta.size(); j++){
+            cout << inst.nodos[cam.ruta[j]].id << " ";
+        }
+        cout << endl;
+    }
+    cout << "Riesgo total: " <<sol.fitness_riesgo << endl;
+    cout << "Distancia total: " <<sol.fitness_camino << endl;
 }
 
 int main(int argc, char const *argv[])
 {
-    float alpha = 0.5;
+    float alpha = 0;
     //se genera matriz de compatibilidad 0 = compatible 
     vector<vector<int>> incompatibilidad ={
                             {0,1,0,0,1},
@@ -143,10 +158,7 @@ int main(int argc, char const *argv[])
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
-    cout << "Zona 7 " << endl;
-    cout << "alpha " << inst.alpha << endl; 
-    cout << "Z1 " << sol.fitness_riesgo << endl;
-    cout << "Z2 " << sol.fitness_camino << endl;
-
+    displaySol(sol, inst);
+    
     return 0;
 }
