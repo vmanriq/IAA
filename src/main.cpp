@@ -147,7 +147,8 @@ void displaySol(solucion sol, instancia inst){
 
 int main(int argc, char const *argv[])
 {
-    float alpha = 0.3;
+    float alpha = atof(argv[1]);
+    cout << "El alpha usado es " << alpha << endl;
     //se genera matriz de compatibilidad 0 = compatible 
     vector<vector<int>> incompatibilidad ={
                             {0,1,0,0,1},
