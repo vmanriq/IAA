@@ -2,9 +2,6 @@
 #include "readFile.cpp"
 
 
-float normalizeComp(float fun, float max){
-    return (fun)/(max);
-}
 
 void visitarNodo(camion * cam, nodo nod){
     cam->ruta.push_back(nod.idx);
@@ -80,9 +77,9 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
                 dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
             }
             //si el camion lo hace mejor 
-            if(inst.alpha*normalizeComp(riesgo_act, 528548)+(1-inst.alpha)*normalizeComp(dist_act,90324) < best_obj){
+            if(inst.alpha*riesgo_act+(1-inst.alpha)*dist_act < best_obj){
                 best_idx = j;
-                best_obj = inst.alpha*normalizeComp(riesgo_act, 528548)+(1-inst.alpha)*normalizeComp(dist_act,90324);
+                best_obj = inst.alpha*riesgo_act+(1-inst.alpha)*dist_act;
                 best_dist = dist_act;
                 best_riesgo = riesgo_act;
             }
