@@ -1,20 +1,39 @@
 
-void normMatrix(vector<vector<vector<float>>> matrices){
-    
+
+float getMax(vector<vector<vector<float>>> matrices, float maxE  ){
+    float maxElem = maxE;
+    float actMax;
+    //recorre las matrices
+    for(int i = 0; i < (int)matrices.size();i++){
+        //recorre las filas de las matrices 
+        for(int j = 0; j < (int)matrices[i].size();j++){
+            actMax = *max_element(matrices[i][j].begin(),matrices[i][j].end());
+            if(maxElem < actMax){
+                maxElem = actMax;
+            }
+        }
+    }
+    return maxElem;
 }
 
-vector<vector <float>> pondSum(vector<vector <float>> dist, vector<vector <float>> riesgo, float alpha, int n_nodos){
-    vector<vector <float>> resultado;
-    vector <float> fila;
-    for(int i = 0; i < n_nodos; i++){
-        for(int j = 0; j < n_nodos ; j++){
-         fila.push_back((alpha)*riesgo[i][j]+(1- alpha)*dist[i][j]);   
+
+vector<vector<vector<float>>> normMatrix(vector<vector<vector<float>>> matrices, float* maxElemAns, float maxE = numeric_limits<float>::min()){
+    float maxElem = getMax(matrices, maxE);
+    vector<vector<vector<float>>> normMat = matrices;
+    //recorre las matrices 
+    for(int i = 0; i < (int)matrices.size();i++){
+        //recorre las filas de las matrices 
+        for(int j = 0; j < (int)matrices[i].size();j++){
+            for(int h = 0 ; h < (int)matrices[i][j].size() ;h++ ){
+                //el elemento h de la fila j de la matriz i se normaliza
+                normMat[i][j][h] = (matrices[i][j][h])/(maxElem);
+            }
         }
-        resultado.push_back(fila);
-        fila.clear();
     }
-    return resultado;
+    *maxElemAns = maxElem;
+    return normMat;
 }
+
 
 //realiza split sobre string segun delimiter y devuelve un vector con los elementos int 
 vector<float> stringToVector(string input, char delimiter){
@@ -98,6 +117,7 @@ instancia leer_instancia(string nombre_instancia, float alpha){
     dummy_vector = stringToVector(line, ' ');
     //dummy_vector.erase(dummy_vector.begin());
     inst.distancia_depot = dummy_vector;
+    inst.distancia_depot_norm = dummy_vector;
     //distancia matrices
     inst.distancias.push_back(leerMatriz(cant_nodos, &infile));
     inst.distancias.push_back(leerMatriz(cant_nodos, &infile));
@@ -110,12 +130,15 @@ instancia leer_instancia(string nombre_instancia, float alpha){
     inst.riesgos.push_back(leerMatriz(cant_nodos, &infile));
     inst.riesgos.push_back(leerMatriz(cant_nodos, &infile));
     inst.riesgos.push_back(leerMatriz(cant_nodos, &infile));
-    //suma ponderada de las mnatrices
-    // inst.ponderados.push_back(pondSum(distancias_A, riesgo_A, alpha, cant_nodos));
-    // inst.ponderados.push_back(pondSum(distancias_B, riesgo_B, alpha, cant_nodos));
-    // inst.ponderados.push_back(pondSum(distancias_C, riesgo_C, alpha, cant_nodos));
-    // inst.ponderados.push_back(pondSum(distancias_D, riesgo_D, alpha, cant_nodos));
-    // inst.ponderados.push_back(pondSum(distancias_E, riesgo_E, alpha, cant_nodos));
+    //matrices normalizadas
+    float maxElem;
+
+    inst.normDistancias = normMatrix(inst.distancias, &maxElem, *max_element(inst.distancia_depot.begin(),inst.distancia_depot.end()));
+    //se normaliza las distancias del depot 
+    for(int i = 0; i< (int)inst.distancia_depot_norm.size(); i++){
+        inst.distancia_depot_norm[i] /= maxElem;
+    } 
+    inst.normRiesgos = normMatrix(inst.riesgos,&maxElem);
     return inst;
 
 }

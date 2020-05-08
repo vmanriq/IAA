@@ -4,6 +4,8 @@
 #include <sstream>
 #include <algorithm>
 #include <string>
+#include <limits>
+#include <tuple>
 using namespace std;
 
 struct  nodo
@@ -37,10 +39,16 @@ struct  instancia
    vector<nodo> nodos;
    //distancias camion vacio
    vector<float> distancia_depot;
+   //distancia depot norm
+   vector<float> distancia_depot_norm;
    //distancias de cada elemento 
    vector<vector<vector <float>>> distancias;
+   //norm distancias
+   vector<vector<vector <float>>> normDistancias;
    //riesgo de cada elemento segun posicion
    vector<vector<vector <float>>> riesgos;
+   //norm riesgos
+   vector<vector<vector <float>>> normRiesgos;
    //----------------ponderado de cada elemento
  //  vector<vector<vector <float>>> ponderados;
    
@@ -53,7 +61,7 @@ struct  instancia
 struct solucion
 {
     //calidad de la solucion
-    float  fitness_riesgo, fitness_camino;
+    float  fitness_riesgo, fitness_camino, fitness_pond;
     //flota de camiones con sus rutas 
     vector<camion> camiones;
 };

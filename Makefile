@@ -1,4 +1,4 @@
 debug:
-	g++ -g -Wall src/main.cpp
+	g++ -g -std=c++1z -Wall src/main.cpp
 clean:
 	rm *.o
