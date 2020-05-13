@@ -2,6 +2,34 @@
 #include "readFile.cpp"
 
 
+vector<int> sortIndex(vector<float> distancias, instancia inst){
+    int idx_a = -1, idx_b = -1, idx_c = -1;
+    int id_aux;
+    vector<int> idx(distancias.size());
+    iota(idx.begin(), idx.end(), 0);
+    stable_sort(idx.begin(), idx.end(), [distancias](int i1, int i2){return distancias[i1]>distancias[i2];});
+    for(int i = 0 ; i<(int)idx.size();i++){
+        id_aux = idx[i];
+        if(inst.nodos[id_aux].tipo_material == 1 && idx_a == -1){
+            idx_a = id_aux;
+        }
+        if(inst.nodos[id_aux].tipo_material == 2 && idx_b == -1){
+            idx_b = id_aux;
+        }
+        if(inst.nodos[id_aux].tipo_material == 3 && idx_c == -1){
+            idx_c = id_aux;
+        }
+        if(idx_a != -1 && idx_b != -1&& idx_c != -1){
+            break;
+        }
+    }
+    //Sse fuerza a iniciar por nodos que tengan elementos A-B-C asi siempre se tienen soluciones factibles con respecto a los conflictos
+    //minimo de camiones necesarios para que no haya conflictos es 2 
+    swap(idx[0],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_a))]);
+    swap(idx[1],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_b))]);
+    swap(idx[2],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_c))]);
+     return idx;
+}
 
 void visitarNodo(camion * cam, nodo nod){
     cam->ruta.push_back(nod.idx);
@@ -54,39 +82,56 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
     vector<nodo> nodos = inst.nodos;
     vector <camion> cam = camiones;
     struct camion aux_cam;
+    //se ordenan los nodos de menor a mayor distancia del depot 
+    vector<int> nodos_idx =sortIndex(inst.distancia_depot, inst);
     float best_riesgo ,best_dist, best_obj = numeric_limits<float>::max();
     float dist_act, riesgo_act, obj_act;
-    int best_idx;
+    int best_idx, i;
     //recorre nodos se salta el primero por que es el depot
-    for(int i = 1; i < (int)nodos.size(); i++){
+    for(auto idx = nodos_idx.begin(); idx != nodos_idx.end(); idx++){
+        i = *idx;
+        //si es que es el depot 
+        if( i == 0){
+            continue;
+        }
         best_obj = numeric_limits<float>::max();
+        best_idx = -1;
+        cout << "---------------nodo " << i <<"--------------------------------" <<endl;
         //Recorre camiones
         for(int j = 0; j < (int)cam.size(); j++){
+            //se toma el camion j 
             aux_cam = cam[j];
             riesgo_act = 0;
             dist_act = 0;
+            
             //si es que no es compatible no se considera 
             if(!checkCompatibility(aux_cam, nodos[i], inst)){
                 continue;
             }
             //no ha salido del depot
             if (aux_cam.riesgo_max == 0){
+                //distancia del depot al nodo i 
                 obj_act = (1-inst.alpha)*inst.distancia_depot_norm[i];
                 dist_act = inst.distancia_depot[i];
             }
             else if (aux_cam.riesgo_max != 0){
+                //se utiliza la matriz de riesgo correspondiente al maximo resigo del camion, luego se donde se encuentra actualemnte y adonde quiere ir
                 obj_act = (inst.alpha)*inst.normRiesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i]+
                           (1-inst.alpha)*inst.normDistancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
                 riesgo_act = inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
                 dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
             }
-            //si el camion lo hace mejor 
+            //si otorga menos a la funcion objetivo 
             if(obj_act < best_obj){
                 best_idx = j;
                 best_obj = obj_act;
                 best_dist = dist_act;
                 best_riesgo = riesgo_act;
             }
+            cout << "Mejor riesto hasta ahora " << best_riesgo << endl;
+        }
+        if(best_idx == -1 ){
+            cout << " NODO NO ASIGNADO !!!!!!!!!!!!!!!!!!! "<< i <<endl;
         }
         //EL CAMION VISITA EL NODO
         visitarNodo(&cam[best_idx], nodos[i]);
@@ -94,7 +139,7 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
         sol->fitness_riesgo += best_riesgo;
         sol->fitness_pond+= best_obj;
     }
-    //se vuelve al depot
+    //se recorren los camiones para que vuelvan al depot
     for(int j = 0; j < (int)cam.size(); j++){
         aux_cam = cam[j];
         // nunca salio del depot
@@ -132,22 +177,25 @@ solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
 
 void displaySol(solucion sol, instancia inst){
     struct camion cam;
-    cout << "Las rutas son: "<< endl;
-    for(int i = 0; i < (int)sol.camiones.size();i++){
-        cam = sol.camiones[i];
-        cout<< "La ruta del camion " << i << " es : ";
-        for(int j = 0 ; j < (int)cam.ruta.size(); j++){
-            cout << inst.nodos[cam.ruta[j]].id << " ";
-        }
-        cout << endl;
-    }
-    cout << "Riesgo total: " <<sol.fitness_riesgo << endl;
-    cout << "Distancia total: " <<sol.fitness_camino << endl;
+    // cout << "Las rutas son: "<< endl;
+    // for(int i = 0; i < (int)sol.camiones.size();i++){
+    //     cam = sol.camiones[i];
+    //     cout<< "La ruta del camion " << i << " es : ";
+    //     for(int j = 0 ; j < (int)cam.ruta.size(); j++){
+    //         //cout << inst.nodos[cam.ruta[j]].id << " ";
+    //         cout << cam.ruta[j] << " ";
+    //     }
+    //     cout << endl;
+    // }
+    printf("Riesgo total %d \n", (int)sol.fitness_riesgo);
+    printf("Distancia total %d \n", (int)sol.fitness_camino);
 }
 
 int main(int argc, char const *argv[])
 {
     float alpha = atof(argv[1]);
+   // for(float alpha = 0.0 ; alpha < 1.1; alpha+=0.1){    
+    string fName = argv[2];
     cout << "El alpha usado es " << alpha << endl;
     //se genera matriz de compatibilidad 0 = compatible 
     vector<vector<int>> incompatibilidad ={
@@ -157,11 +205,12 @@ int main(int argc, char const *argv[])
                             {0,0,1,0,0},
                             {1,0,0,0,0}};
     //orden de dominancia de mayor a menor 
-    struct instancia inst = leer_instancia("Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat", alpha);
+    struct instancia inst = leer_instancia(fName, alpha);
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
     displaySol(sol, inst);
-    
+    cout << "----------------------------" << endl;
+    //}
     return 0;
 }

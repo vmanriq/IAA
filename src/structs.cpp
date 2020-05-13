@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <numeric>
 #include <vector>
 #include <sstream>
 #include <algorithm>
@@ -49,8 +50,6 @@ struct  instancia
    vector<vector<vector <float>>> riesgos;
    //norm riesgos
    vector<vector<vector <float>>> normRiesgos;
-   //----------------ponderado de cada elemento
- //  vector<vector<vector <float>>> ponderados;
    
    //matriz de incompatibilidad
    vector<vector<int>> incompatibilidad;

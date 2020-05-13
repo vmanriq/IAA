@@ -35,7 +35,7 @@ vector<vector<vector<float>>> normMatrix(vector<vector<vector<float>>> matrices,
 }
 
 
-//realiza split sobre string segun delimiter y devuelve un vector con los elementos int 
+//realiza split sobre string segun delimiter y devuelve un vector con los elementos float 
 vector<float> stringToVector(string input, char delimiter){
     vector<float> splitStr;
     stringstream ss(input);
