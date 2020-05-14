@@ -2,37 +2,36 @@
 #include "readFile.cpp"
 
 
+
+void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
+    float distancia = 0;
+    float riesgo = 0;
+    int max_riesgo = 0;
+    for(auto cam = camiones.begin() ; cam != camiones.end(); cam++){
+        //se toma la distancia del depot
+        distancia+= inst.distancia_depot[cam->ruta[0]];
+        max_riesgo = inst.nodos[cam->ruta[0]].tipo_material;
+        for(int i = 0 ; i < (int)cam->ruta.size()-1 ; i++){
+            distancia+=inst.distancias[max_riesgo-1][cam->ruta[i]][cam->ruta[i+1]];
+            riesgo+=inst.riesgos[max_riesgo-1][cam->ruta[i]][cam->ruta[i+1]];
+            //se actualiza el riesgo 
+            if(inst.nodos[cam->ruta[i]].tipo_material < inst.nodos[cam->ruta[i+1]].tipo_material){
+                max_riesgo = inst.nodos[cam->ruta[i+1]].tipo_material;
+            }
+        }
+    }
+    sol->fitness_camino = distancia;
+    sol->fitness_riesgo = riesgo;
+}
+
+
 vector<int> sortIndex(instancia inst){
-    int idx_a = -1, idx_b = -1, idx_c = -1, idx_d = -1;
-    int id_aux;
     vector<int> idx(inst.nodos.size());
     iota(idx.begin(), idx.end(), 0);
     vector<nodo> nodos = inst.nodos;
-    stable_sort(idx.begin(), idx.end(), [nodos](int i1, int i2){return nodos[i1].tipo_material<nodos[i2].tipo_material;});
-    for(int i = 0 ; i<(int)idx.size();i++){
-        id_aux = idx[i];
-        if(inst.nodos[id_aux].tipo_material == 1 && idx_a == -1){
-            idx_a = id_aux;
-        }
-        if(inst.nodos[id_aux].tipo_material == 2 && idx_b == -1){
-            idx_b = id_aux;
-        }
-        if(inst.nodos[id_aux].tipo_material == 3 && idx_c == -1){
-            idx_c = id_aux;
-        }
-        if(inst.nodos[id_aux].tipo_material == 4 && idx_d == -1){
-            idx_d = id_aux;
-        }
-        if(idx_a != -1 && idx_b != -1&& idx_c != -1&& idx_d != -1){
-            break;
-        }
-    }
-    //Sse fuerza a iniciar por nodos que tengan elementos A-B-C asi siempre se tienen soluciones factibles con respecto a los conflictos
-    //minimo de camiones necesarios para que no haya conflictos es 2 
-    swap(idx[0],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_a))]);
-    swap(idx[1],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_b))]);
-    swap(idx[2],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_c))]);
-    swap(idx[3],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_d))]);
+    stable_sort(idx.begin(), idx.end(), [nodos](int i1, int i2){return nodos[i1].tipo_material>nodos[i2].tipo_material;});
+    vector<float> dis_d = inst.distancia_depot;
+    stable_sort(idx.begin(), idx.end(), [dis_d](int i1, int i2){return dis_d[i1]>dis_d[i2];});
      return idx;
 }
 
@@ -80,86 +79,75 @@ bool checkCompatibility(camion cam,nodo nod ,instancia inst){
     return true;
 }
 
+int getBestNode(camion cam, int idx_node, vector<int> nodos_idx, instancia inst){
+    int best_n = -1;
+    float best_fitness = numeric_limits<float>::max(), alpha = inst.alpha; 
+    float act_fitness;
+    for(auto i = nodos_idx.begin(); i != nodos_idx.end();i++ ){
+        //si no son compatibles, por peso o por conflicto no se toma en cuenta 
+        if(!checkCompatibility(cam, inst.nodos[*i], inst)){
+            continue;
+        }
+        act_fitness = alpha*inst.normRiesgos[cam.riesgo_max-1][*i][idx_node]+
+                      (1-alpha)*inst.normDistancias[cam.riesgo_max-1][*i][idx_node];
+        if(act_fitness < best_fitness){
+            best_fitness = act_fitness;
+            best_n = *i;
+        }
+    }
+    return best_n;
+}
+
 void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
     sol->fitness_riesgo = 0;
     sol->fitness_camino = 0;
     sol->fitness_pond = 0;
     vector<nodo> nodos = inst.nodos;
     vector <camion> cam = camiones;
+    vector <camion> sol_cam ;
     struct camion aux_cam;
+    int idx_nodo;
     //se ordenan los nodos de menor a mayor distancia del depot 
     vector<int> nodos_idx =sortIndex(inst);
-    float best_riesgo ,best_dist, best_obj = numeric_limits<float>::max();
-    float dist_act, riesgo_act, obj_act;
-    int best_idx, i;
-    //recorre nodos se salta el primero por que es el depot
-    for(auto idx = nodos_idx.begin(); idx != nodos_idx.end(); idx++){
-        i = *idx;
-        //si es que es el depot 
-        if( i == 0){
-            continue;
-        }
-        best_obj = numeric_limits<float>::max();
-        best_idx = -1;
-   //     cout << "---------------nodo " << i <<"--------------------------------" <<endl;
-        //Recorre camiones
-        for(int j = 0; j < (int)cam.size(); j++){
-            //se toma el camion j 
-            aux_cam = cam[j];
-            riesgo_act = 0;
-            dist_act = 0;
-            
-            //si es que no es compatible no se considera 
-            if(!checkCompatibility(aux_cam, nodos[i], inst)){
-                continue;
+    //se elimina el indice del depot
+    nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), 0),nodos_idx.end());
+    
+    //si es que no todos los nodos han sido asignados, excepto el depot
+    while(nodos_idx.size() != 0 ){
+        //se inicializa un camion
+        if(cam.size() == 0){
+            cout << "SOLUCION NO FACTIBLE" << endl;
+        } 
+        aux_cam = cam.back();
+        cam.pop_back();
+        //sale del depot
+       // aux_cam.ruta.push_back(0);
+        //se le asigna el nodo mas ---- al depot 
+        visitarNodo(&aux_cam,inst.nodos[nodos_idx.back()]);
+        nodos_idx.pop_back();
+        //mientras la ruta de este camion sea factible
+        while (true)
+        {
+            idx_nodo = getBestNode(aux_cam ,aux_cam.ruta.back(), nodos_idx, inst);
+            //no existe nodo compatible, es necesario generar otra ruta 
+            if(idx_nodo == -1){
+                sol_cam.push_back(aux_cam);
+                //se devuelve al depot
+                visitarNodo(&aux_cam,inst.nodos[0]);
+                break;
             }
-            //no ha salido del depot
-            if (aux_cam.riesgo_max == 0){
-                //distancia del depot al nodo i 
-                obj_act = (1-inst.alpha)*inst.distancia_depot_norm[i];
-                dist_act = inst.distancia_depot[i];
-            }
-            else if (aux_cam.riesgo_max != 0){
-                //se utiliza la matriz de riesgo correspondiente al maximo resigo del camion, luego se donde se encuentra actualemnte y adonde quiere ir
-                obj_act = (inst.alpha)*inst.normRiesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i]+
-                          (1-inst.alpha)*inst.normDistancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i] - (1- aux_cam.capacidad_restante/40000)*0.25 ;
-                riesgo_act = inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
-                dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
-            }
-            //si otorga menos a la funcion objetivo 
-            if(obj_act < best_obj){
-                best_idx = j;
-                best_obj = obj_act;
-                best_dist = dist_act;
-                best_riesgo = riesgo_act;
-            }
-      //      cout << "Mejor riesto hasta ahora " << best_riesgo << endl;
+            visitarNodo(&aux_cam,inst.nodos[idx_nodo]);
+            nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), idx_nodo),nodos_idx.end());
         }
-        if(best_idx == -1 ){
-            cout << " NODO NO ASIGNADO !!!!!!!!!!!!!!!!!!! "<< i <<endl;
-        }
-        //EL CAMION VISITA EL NODO
-        visitarNodo(&cam[best_idx], nodos[i]);
-        sol->fitness_camino += best_dist;
-        sol->fitness_riesgo += best_riesgo;
-        sol->fitness_pond+= best_obj;
-    }
-    //se recorren los camiones para que vuelvan al depot
-    for(int j = 0; j < (int)cam.size(); j++){
-        aux_cam = cam[j];
-        // nunca salio del depot
-        if(aux_cam.ruta.size() == 0){
-            continue;
-        }
-        else{
-            sol->fitness_camino += inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
-            sol->fitness_riesgo += inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][0];
-            visitarNodo(&cam[j], nodos[0]);
-        }
+        
+         
 
+
+        }
+    evalSol(sol_cam, sol, inst);
+     
     }
-    sol->camiones = cam;
-}
+   
 
 solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
     struct solucion sol;
