@@ -3,13 +3,36 @@
 
 
 vector<int> sortIndex(instancia inst){
-    int idx_a = -1, idx_b = -1, idx_c = -1;
+    int idx_a = -1, idx_b = -1, idx_c = -1, idx_d = -1;
     int id_aux;
     vector<int> idx(inst.nodos.size());
     iota(idx.begin(), idx.end(), 0);
     vector<nodo> nodos = inst.nodos;
     stable_sort(idx.begin(), idx.end(), [nodos](int i1, int i2){return nodos[i1].tipo_material<nodos[i2].tipo_material;});
-
+    for(int i = 0 ; i<(int)idx.size();i++){
+        id_aux = idx[i];
+        if(inst.nodos[id_aux].tipo_material == 1 && idx_a == -1){
+            idx_a = id_aux;
+        }
+        if(inst.nodos[id_aux].tipo_material == 2 && idx_b == -1){
+            idx_b = id_aux;
+        }
+        if(inst.nodos[id_aux].tipo_material == 3 && idx_c == -1){
+            idx_c = id_aux;
+        }
+        if(inst.nodos[id_aux].tipo_material == 4 && idx_d == -1){
+            idx_d = id_aux;
+        }
+        if(idx_a != -1 && idx_b != -1&& idx_c != -1&& idx_d != -1){
+            break;
+        }
+    }
+    //Sse fuerza a iniciar por nodos que tengan elementos A-B-C asi siempre se tienen soluciones factibles con respecto a los conflictos
+    //minimo de camiones necesarios para que no haya conflictos es 2 
+    swap(idx[0],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_a))]);
+    swap(idx[1],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_b))]);
+    swap(idx[2],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_c))]);
+    swap(idx[3],idx[distance(idx.begin(),find(idx.begin(), idx.end(), idx_d))]);
      return idx;
 }
 
@@ -99,7 +122,7 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
             else if (aux_cam.riesgo_max != 0){
                 //se utiliza la matriz de riesgo correspondiente al maximo resigo del camion, luego se donde se encuentra actualemnte y adonde quiere ir
                 obj_act = (inst.alpha)*inst.normRiesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i]+
-                          (1-inst.alpha)*inst.normDistancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
+                          (1-inst.alpha)*inst.normDistancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i] - (1- aux_cam.capacidad_restante/40000)*0.25 ;
                 riesgo_act = inst.riesgos[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
                 dist_act = inst.distancias[aux_cam.riesgo_max-1][aux_cam.ruta.back()][i];
             }
@@ -169,30 +192,36 @@ void displaySol(solucion sol, instancia inst){
     //     }
     //     cout << endl;
     // }
-    printf("Riesgo total %d \n", (int)sol.fitness_riesgo);
-    printf("Distancia total %d \n", (int)sol.fitness_camino);
+    
+    printf(" %d;%d \n", (int)sol.fitness_riesgo,(int)sol.fitness_camino);
+    //printf("Distancia total %d \n", (int)sol.fitness_camino);
 }
 
 int main(int argc, char const *argv[])
 {
     //float alpha = atof(argv[1]);
-    for(float alpha = 0.0 ; alpha < 1.1; alpha+=0.1){    
-        string fName = argv[2];
-        cout << "El alpha usado es " << alpha << endl;
-        //se genera matriz de compatibilidad 0 = compatible 
-        vector<vector<int>> incompatibilidad ={
-                                {0,1,0,0,1},
-                                {1,0,0,0,0},
-                                {0,0,0,1,0},
-                                {0,0,1,0,0},
-                                {1,0,0,0,0}};
-        //orden de dominancia de mayor a menor 
-        struct instancia inst = leer_instancia(fName, alpha);
-        inst.incompatibilidad = incompatibilidad;
-        inst.alpha = alpha;
-        struct solucion sol = initSol(inst, incompatibilidad);
-        displaySol(sol, inst);
+    for(int i=1 ; i <8 ; i++){
+        string fName = "Instances/peligro-mezcla4-min-riesgo-zona"+to_string(i)+"-2k-AE.2.hazmat";
+        cout << fName<< endl;
+        for(float alpha = 0.0 ; alpha < 1.1; alpha+=0.1){    
+            //string fName = argv[2];
+            //cout << "El alpha usado es " << alpha << endl;
+            //se genera matriz de compatibilidad 0 = compatible 
+            vector<vector<int>> incompatibilidad ={
+                                    {0,1,0,0,1},
+                                    {1,0,0,0,0},
+                                    {0,0,0,1,0},
+                                    {0,0,1,0,0},
+                                    {1,0,0,0,0}};
+            //orden de dominancia de mayor a menor 
+            struct instancia inst = leer_instancia(fName, alpha);
+            inst.incompatibilidad = incompatibilidad;
+            inst.alpha = alpha;
+            struct solucion sol = initSol(inst, incompatibilidad);
+            displaySol(sol, inst);
+            //cout << "----------------------------" << endl;
+        }
         cout << "----------------------------" << endl;
-   }
+    }
     return 0;
 }
