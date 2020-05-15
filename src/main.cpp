@@ -7,6 +7,7 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     float distancia = 0;
     float riesgo = 0;
     int max_riesgo = 0;
+    //se recorren los camiones
     for(auto cam = camiones.begin() ; cam != camiones.end(); cam++){
         //se toma la distancia del depot
         distancia+= inst.distancia_depot[cam->ruta[0]];
@@ -22,17 +23,17 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     }
     sol->fitness_camino = distancia;
     sol->fitness_riesgo = riesgo;
+    sol->camiones = camiones;
 }
 
 
+//se ordenan por tipo de riesgo del material 
 vector<int> sortIndex(instancia inst){
     vector<int> idx(inst.nodos.size());
     iota(idx.begin(), idx.end(), 0);
     vector<nodo> nodos = inst.nodos;
-    stable_sort(idx.begin(), idx.end(), [nodos](int i1, int i2){return nodos[i1].tipo_material>nodos[i2].tipo_material;});
-    vector<float> dis_d = inst.distancia_depot;
-    stable_sort(idx.begin(), idx.end(), [dis_d](int i1, int i2){return dis_d[i1]>dis_d[i2];});
-     return idx;
+    stable_sort(idx.begin(), idx.end(), [nodos](int i1, int i2){return nodos[i1].tipo_material>nodos[i2].tipo_material;}); 
+    return idx;
 }
 
 void visitarNodo(camion * cam, nodo nod){
@@ -83,13 +84,17 @@ int getBestNode(camion cam, int idx_node, vector<int> nodos_idx, instancia inst)
     int best_n = -1;
     float best_fitness = numeric_limits<float>::max(), alpha = inst.alpha; 
     float act_fitness;
+    //recorro los nodos disponibles
     for(auto i = nodos_idx.begin(); i != nodos_idx.end();i++ ){
         //si no son compatibles, por peso o por conflicto no se toma en cuenta 
         if(!checkCompatibility(cam, inst.nodos[*i], inst)){
             continue;
         }
-        act_fitness = alpha*inst.normRiesgos[cam.riesgo_max-1][*i][idx_node]+
-                      (1-alpha)*inst.normDistancias[cam.riesgo_max-1][*i][idx_node];
+        //se calcula la fitness hacia el nodo *i
+        act_fitness = (alpha*inst.normRiesgos[cam.riesgo_max-1][*i][idx_node]+
+                      (1-alpha)*inst.normDistancias[cam.riesgo_max-1][*i][idx_node]);
+                      
+                      
         if(act_fitness < best_fitness){
             best_fitness = act_fitness;
             best_n = *i;
@@ -121,7 +126,6 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
         aux_cam = cam.back();
         cam.pop_back();
         //sale del depot
-       // aux_cam.ruta.push_back(0);
         //se le asigna el nodo mas ---- al depot 
         visitarNodo(&aux_cam,inst.nodos[nodos_idx.back()]);
         nodos_idx.pop_back();
@@ -131,12 +135,13 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
             idx_nodo = getBestNode(aux_cam ,aux_cam.ruta.back(), nodos_idx, inst);
             //no existe nodo compatible, es necesario generar otra ruta 
             if(idx_nodo == -1){
-                sol_cam.push_back(aux_cam);
                 //se devuelve al depot
                 visitarNodo(&aux_cam,inst.nodos[0]);
+                sol_cam.push_back(aux_cam);
                 break;
             }
             visitarNodo(&aux_cam,inst.nodos[idx_nodo]);
+            //se elimina el nodo visitado de la lista de nodos
             nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), idx_nodo),nodos_idx.end());
         }
         
@@ -170,46 +175,37 @@ solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
 
 void displaySol(solucion sol, instancia inst){
     struct camion cam;
-    // cout << "Las rutas son: "<< endl;
-    // for(int i = 0; i < (int)sol.camiones.size();i++){
-    //     cam = sol.camiones[i];
-    //     cout<< "La ruta del camion " << i << " es : ";
-    //     for(int j = 0 ; j < (int)cam.ruta.size(); j++){
-    //         //cout << inst.nodos[cam.ruta[j]].id << " ";
-    //         cout << cam.ruta[j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-    
-    printf(" %d;%d \n", (int)sol.fitness_riesgo,(int)sol.fitness_camino);
-    //printf("Distancia total %d \n", (int)sol.fitness_camino);
+    cout << "Las rutas son: "<< endl;
+    for(int i = 0; i < (int)sol.camiones.size();i++){
+        cam = sol.camiones[i];
+        cout<< "La ruta del camion " << i << " es : ";
+        for(int j = 0 ; j < (int)cam.ruta.size(); j++){
+            //cout << inst.nodos[cam.ruta[j]].id << " ";
+            cout << cam.ruta[j] << " ";
+        }
+        cout << endl;
+    }
+    cout << "(Z1) Riesgo:  " << sol.fitness_riesgo<<endl;
+    cout << "(Z2) Distancia:  " << sol.fitness_camino<<endl;
+
 }
 
 int main(int argc, char const *argv[])
 {
-    //float alpha = atof(argv[1]);
-    for(int i=1 ; i <8 ; i++){
-        string fName = "Instances/peligro-mezcla4-min-riesgo-zona"+to_string(i)+"-2k-AE.2.hazmat";
-        cout << fName<< endl;
-        for(float alpha = 0.0 ; alpha < 1.1; alpha+=0.1){    
-            //string fName = argv[2];
-            //cout << "El alpha usado es " << alpha << endl;
-            //se genera matriz de compatibilidad 0 = compatible 
-            vector<vector<int>> incompatibilidad ={
+    vector<vector<int>> incompatibilidad ={
                                     {0,1,0,0,1},
                                     {1,0,0,0,0},
                                     {0,0,0,1,0},
                                     {0,0,1,0,0},
                                     {1,0,0,0,0}};
-            //orden de dominancia de mayor a menor 
-            struct instancia inst = leer_instancia(fName, alpha);
-            inst.incompatibilidad = incompatibilidad;
-            inst.alpha = alpha;
-            struct solucion sol = initSol(inst, incompatibilidad);
-            displaySol(sol, inst);
-            //cout << "----------------------------" << endl;
-        }
-        cout << "----------------------------" << endl;
-    }
+    float alpha = atof(argv[1]);
+    string fName = argv[2];
+    cout << "Instancia: " <<fName<< endl;
+    cout << "Alpha utilizado: " <<alpha<< endl;
+    struct instancia inst = leer_instancia(fName, alpha);
+    inst.incompatibilidad = incompatibilidad;
+    inst.alpha = alpha;
+    struct solucion sol = initSol(inst, incompatibilidad);
+    displaySol(sol, inst);
     return 0;
 }
