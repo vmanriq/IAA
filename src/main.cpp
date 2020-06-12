@@ -1,7 +1,16 @@
 #include "structs.cpp"
 #include "readFile.cpp"
+#include "SA.cpp"
 
 
+
+/* 
+function evalSol:
+Funcion que evalua el fitnees de la solucion 
+return void:
+
+
+*/
 
 void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     float distancia = 0;
@@ -112,26 +121,30 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
     vector <camion> sol_cam ;
     struct camion aux_cam;
     int idx_nodo;
-    //se ordenan los nodos de menor a mayor distancia del depot 
-    vector<int> nodos_idx =sortIndex(inst);
+    //se ordenan los nodos de menor a mayor riesgo  
+    vector<int> nodos_idx = sortIndex(inst);
     //se elimina el indice del depot
     nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), 0),nodos_idx.end());
     
     //si es que no todos los nodos han sido asignados, excepto el depot
     while(nodos_idx.size() != 0 ){
-        //se inicializa un camion
+        //si es qu eno hay camiones 
         if(cam.size() == 0){
             cout << "SOLUCION NO FACTIBLE" << endl;
         } 
+        //se  toma un camion 
         aux_cam = cam.back();
+        //se elimina de la lista de camiones en el "depot"
         cam.pop_back();
-        //sale del depot
-        //se le asigna el nodo mas ---- al depot 
+
+        //se le asigna el nodo mas con mayor peligro 
         visitarNodo(&aux_cam,inst.nodos[nodos_idx.back()]);
+        //se visita este nodo 
         nodos_idx.pop_back();
         //mientras la ruta de este camion sea factible
         while (true)
         {
+            //se busca el nodo que otorge menos a la funcion objetivo 
             idx_nodo = getBestNode(aux_cam ,aux_cam.ruta.back(), nodos_idx, inst);
             //no existe nodo compatible, es necesario generar otra ruta 
             if(idx_nodo == -1){
@@ -140,6 +153,7 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
                 sol_cam.push_back(aux_cam);
                 break;
             }
+            //si es factible se visita el nodo seleccionado 
             visitarNodo(&aux_cam,inst.nodos[idx_nodo]);
             //se elimina el nodo visitado de la lista de nodos
             nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), idx_nodo),nodos_idx.end());
@@ -200,6 +214,7 @@ int main(int argc, char const *argv[])
                                     {1,0,0,0,0}};
     float alpha = atof(argv[1]);
     string fName = argv[2];
+    srand(seed)
     cout << "Instancia: " <<fName<< endl;
     cout << "Alpha utilizado: " <<alpha<< endl;
     struct instancia inst = leer_instancia(fName, alpha);
