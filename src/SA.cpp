@@ -3,15 +3,29 @@
 
 
 
+
+
+
+/*
+function search_n
+Se  elige un movimiento aleatorio para crear un vecino de la solucion actual 
+ */
 solucion search_n (solucion sol){
-    
-    solucion new_sol;
+    solucion new_sol = sol;
+    double randNe = nrand48();
+    //0.5 de elegir este movimiento 
+    if(randNe < 0.33){
+        realocate(&new_sol);
+    }
+    else if (randNe < 0.66){
+        exchange(&new_sol);
+    }
+    else {
+        opt_2(&new_sol);
+    }
 
     return new_sol
 }
-
-
-
 /*
 instancia: instancia del problema 
 sol: puntero a solucion completa
