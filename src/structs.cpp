@@ -26,6 +26,10 @@ struct camion
     float capacidad_restante;
     int riesgo_max;
     vector<int> materiales_cargados;
+    camion(){
+        riesgo_max = 0;
+        materiales_cargados = {0,0,0,0,0};
+    }
 };
 
 

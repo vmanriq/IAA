@@ -1,4 +1,3 @@
-#include "structs.cpp"
 
 
 
@@ -19,6 +18,72 @@ void visitarNodo(camion * cam, nodo nod){
     }
 }
 
+/*chekea compatbilidad, tanto de carga como de elementos, y devuelve indice del camion compatible
+Params:    
+    vector<camion>: vector con camiones 
+    nodo nod: nodo a visitar
+    instancia inst: instancia del problema 
+Return:
+    int idx: indice del camion compatible para visitar al nodo, -1 de no encontrar ningun camio compatible 
+*/
+bool checkCompatibility(camion cam,nodo nod ,instancia inst){
+    int idx = -1;
+    int material = nod.tipo_material;
+    idx++;
+    //se chequea si la capacidad es compatible
+    if(cam.capacidad_restante-nod.cantidad_material < 0){
+        return false;
+    }
+    //se recorren la compatiblidad de los elementos
+    for(int j = 0; j < (int)cam.materiales_cargados.size();j++ ){
+        if(cam.materiales_cargados[j] == 1 &&inst.incompatibilidad[material-1][j] == 1){
+            return false;
+        }
+    }
+    //si poasa todo es compatible 
+    return true;
+}
+
+
+
+void solEvaluation(solucion *sol, instancia inst){
+    float distancia_fit = 0;
+    float riesgo_fit = 0;
+    int idx_cam = 0, idx_nod;
+    float riesgo;
+    int penalty = 0;
+    //recorre cada camion 
+    for(auto cam = sol->camiones.begin(); cam != sol->camiones.end(); cam++){
+        camion aux_cam;
+        aux_cam.capacidad_restante = inst.capacidad_camiones[idx_cam]; 
+        for(int pos_nod = 0;  pos_nod < cam->ruta.size(); pos_nod++){
+            idx_nod = cam->ruta[idx_nod];
+            //si es que es primer nodo que se visita 
+            if((int)aux_cam.ruta.size() < 1){
+                visitarNodo(&aux_cam, inst.nodos[idx_nod]);
+                distancia_fit+= inst.distancia_depot[idx_nod];
+            }
+            else{
+                penalty = 0;
+                //si es que el nodo es compatible no pasa nada :D
+                if(!checkCompatibility(aux_cam, inst.nodos[idx_nod], inst)){
+                    penalty = 500000;    
+                }
+                visitarNodo(&aux_cam, inst.nodos[idx_nod]);
+                riesgo = aux_cam.riesgo_max - 1;
+                distancia_fit += inst.distancias[riesgo][aux_cam.ruta[pos_nod-1]][aux_cam.ruta[pos_nod]] + penalty;
+                riesgo_fit += inst.riesgos[riesgo][aux_cam.ruta[pos_nod-1]][aux_cam.ruta[pos_nod]] + penalty;
+            }
+        }
+        idx_cam++;
+    }
+    sol->fitness_riesgo = riesgo_fit;
+    sol->fitness_camino = distancia_fit;
+    //falta sumar riesgos ponderados 
+
+}
+
+
 /*Devuelve el indice de un vector que haya salido del depot  */
 int random_cam(vector<camion> camiones){
     vector<int> idxs;
@@ -33,8 +98,6 @@ int random_cam(vector<camion> camiones){
 
 void regenerateRute(camion *cam, instancia inst){
     camion new_cam;
-    new_cam.riesgo_max = 0;
-    new_cam.materiales_cargados = {0,0,0,0,0};  
     //se visitan todos los nodos 
     for(auto n = cam->ruta.begin(); n != cam->ruta.end(); n++){
         visitarNodo(&new_cam, inst.nodos[*n]);
@@ -99,7 +162,7 @@ solucion search_n (solucion sol, instancia inst){
     //     opt_2(&new_sol, inst);
     // }
 
-    return new_sol
+    return new_sol;
 }
 /*
 instancia: instancia del problema 

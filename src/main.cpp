@@ -24,12 +24,12 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
         //se toma la distancia del depot
         distancia+= inst.distancia_depot[cam->ruta[0]];
         max_riesgo = inst.nodos[cam->ruta[0]].tipo_material;
-        for(int i = 0 ; i < (int)cam->ruta.size()-1 ; i++){
-            distancia+=inst.distancias[max_riesgo-1][cam->ruta[i]][cam->ruta[i+1]];
-            riesgo+=inst.riesgos[max_riesgo-1][cam->ruta[i]][cam->ruta[i+1]];
+        for(int i = 1 ; i < (int)cam->ruta.size() ; i++){
+            distancia+=inst.distancias[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]];
+            riesgo+=inst.riesgos[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]];
             //se actualiza el riesgo 
-            if(inst.nodos[cam->ruta[i]].tipo_material < inst.nodos[cam->ruta[i+1]].tipo_material){
-                max_riesgo = inst.nodos[cam->ruta[i+1]].tipo_material;
+            if(inst.nodos[cam->ruta[i-1]].tipo_material < inst.nodos[cam->ruta[i]].tipo_material){
+                max_riesgo = inst.nodos[cam->ruta[i]].tipo_material;
             }
         }
     }
@@ -48,34 +48,6 @@ vector<int> sortIndex(instancia inst){
     return idx;
 }
 
-
-
-
-/*chekea compatbilidad, tanto de carga como de elementos, y devuelve indice del camion compatible
-Params:    
-    vector<camion>: vector con camiones 
-    nodo nod: nodo a visitar
-    instancia inst: instancia del problema 
-Return:
-    int idx: indice del camion compatible para visitar al nodo, -1 de no encontrar ningun camio compatible 
-*/
-bool checkCompatibility(camion cam,nodo nod ,instancia inst){
-    int idx = -1;
-    int material = nod.tipo_material;
-    idx++;
-    //se chequea si la capacidad es compatible
-    if(cam.capacidad_restante-nod.cantidad_material < 0){
-        return false;
-    }
-    //se recorren la compatiblidad de los elementos
-    for(int j = 0; j < (int)cam.materiales_cargados.size();j++ ){
-        if(cam.materiales_cargados[j] == 1 &&inst.incompatibilidad[material-1][j] == 1){
-            return false;
-        }
-    }
-    //si poasa todo es compatible 
-    return true;
-}
 
 int getBestNode(camion cam, int idx_node, vector<int> nodos_idx, instancia inst){
     int best_n = -1;
@@ -167,9 +139,6 @@ solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
     //se llena el vector con camiones 
     for(int i = 0; i < inst.cant_camiones;i++){
         cam.capacidad_restante = inst.capacidad_camiones[i];
-        cam.riesgo_max = 0;
-        cam.materiales_cargados = {0,0,0,0,0};  
-        cam.ruta = ruta;
         camiones.push_back(cam);
     }
     sol.camiones = camiones;
