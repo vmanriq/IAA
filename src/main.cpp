@@ -3,7 +3,6 @@
 #include "SA.cpp"
 
 
-
 /* 
 function evalSol:
 Funcion que evalua el fitnees de la solucion 
@@ -18,6 +17,10 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     int max_riesgo = 0;
     //se recorren los camiones
     for(auto cam = camiones.begin() ; cam != camiones.end(); cam++){
+        //si es que  nunca salio del depot 
+        if(cam->ruta.size() == 0){
+            continue;
+        }
         //se toma la distancia del depot
         distancia+= inst.distancia_depot[cam->ruta[0]];
         max_riesgo = inst.nodos[cam->ruta[0]].tipo_material;
@@ -45,22 +48,7 @@ vector<int> sortIndex(instancia inst){
     return idx;
 }
 
-void visitarNodo(camion * cam, nodo nod){
-    cam->ruta.push_back(nod.idx);
-    cam->capacidad_restante-=nod.cantidad_material;
-    //si es el depot
-    if(nod.idx == 0){
-        return;
-    }
-    //si es que no llevaba un material igual se agrega 
-    if(cam->materiales_cargados[nod.tipo_material-1] != 1){
-        cam->materiales_cargados[nod.tipo_material-1] = 1;
-    }
-    //se actualiza el riesgo del camion 
-    if(cam->riesgo_max < nod.tipo_material){
-        cam->riesgo_max = nod.tipo_material;
-    }
-}
+
 
 
 /*chekea compatbilidad, tanto de carga como de elementos, y devuelve indice del camion compatible
@@ -163,6 +151,9 @@ void bestInsertionH(instancia inst, vector <camion> camiones, solucion *sol){
 
 
         }
+    //se agregan los camiones vacios que no se utilizaron 
+    sol_cam.insert(sol_cam.end(), cam.begin(), cam.end());
+
     evalSol(sol_cam, sol, inst);
      
     }
@@ -214,7 +205,7 @@ int main(int argc, char const *argv[])
                                     {1,0,0,0,0}};
     float alpha = atof(argv[1]);
     string fName = argv[2];
-    srand(seed)
+    srand(42);
     cout << "Instancia: " <<fName<< endl;
     cout << "Alpha utilizado: " <<alpha<< endl;
     struct instancia inst = leer_instancia(fName, alpha);

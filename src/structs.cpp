@@ -7,6 +7,8 @@
 #include <string>
 #include <limits>
 #include <tuple>
+#include <math.h>
+
 using namespace std;
 
 struct  nodo
