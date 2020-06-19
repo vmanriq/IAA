@@ -15,6 +15,7 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     float distancia = 0;
     float riesgo = 0;
     int max_riesgo = 0;
+    float pond_fit = 0;
     //se recorren los camiones
     for(auto cam = camiones.begin() ; cam != camiones.end(); cam++){
         //si es que  nunca salio del depot 
@@ -27,6 +28,8 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
         for(int i = 1 ; i < (int)cam->ruta.size() ; i++){
             distancia+=inst.distancias[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]];
             riesgo+=inst.riesgos[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]];
+            pond_fit += (inst.alpha)*inst.normRiesgos[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]]
+                             + (1-inst.alpha)*inst.normDistancias[max_riesgo-1][cam->ruta[i-1]][cam->ruta[i]];
             //se actualiza el riesgo 
             if(inst.nodos[cam->ruta[i-1]].tipo_material < inst.nodos[cam->ruta[i]].tipo_material){
                 max_riesgo = inst.nodos[cam->ruta[i]].tipo_material;
@@ -35,6 +38,7 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst){
     }
     sol->fitness_camino = distancia;
     sol->fitness_riesgo = riesgo;
+    sol->fitness_pond = pond_fit;
     sol->camiones = camiones;
 }
 
@@ -181,6 +185,7 @@ int main(int argc, char const *argv[])
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
+    SAA(inst, &sol, 100, 0.9, 100, 100);
     displaySol(sol, inst);
     return 0;
 }

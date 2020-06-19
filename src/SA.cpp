@@ -1,5 +1,4 @@
 
-#include "structs.cpp"
 
 void visitarNodo(camion * cam, nodo nod){
     cam->ruta.push_back(nod.idx);
@@ -47,9 +46,14 @@ bool checkCompatibility(camion cam,nodo nod ,instancia inst){
 
 void regenerateRute(camion *cam, instancia inst){
     camion new_cam;
+    new_cam.capacidad_restante = inst.capacidad_camiones[0];
     //se visitan todos los nodos 
     for(auto n = cam->ruta.begin(); n != cam->ruta.end(); n++){
         visitarNodo(&new_cam, inst.nodos[*n]);
+    }
+    // visitarNodo(&new_cam, inst.nodos[0]);
+    if( !new_cam.ruta.empty() && new_cam.ruta.back() != 0){
+        visitarNodo(&new_cam, inst.nodos[0]);
     }
     *cam = new_cam;
 }
@@ -109,9 +113,10 @@ se aceptan soluciones infactibles (?)
  */
 void relocation(solucion *sol, instancia inst){
     solucion new_sol = *sol;
- 
+    bool flag = true;
     //se elige un camion al azar  el cual hay salido del depot 
     int idx_cam1 = random_cam(sol->camiones);
+    int nodo_idx_insert = 0;
     //se elige otro camion al azar, puede ser el mismo 
     vector<int> camiones_idx(inst.cant_camiones);
     iota(camiones_idx.begin(), camiones_idx.end(), 0);
@@ -120,7 +125,7 @@ void relocation(solucion *sol, instancia inst){
     camiones_idx.pop_back();
  
     //se elige la posicion del nodo a extraer
-    int nodo_idx = (int)((sol->camiones[idx_cam1].ruta.size()-2)*drand48());
+    int nodo_idx = (int)((sol->camiones[idx_cam1].ruta.size()-1)*drand48());
     //se guarda el valor del nodo 
     int nod_val = sol->camiones[idx_cam1].ruta[nodo_idx];
     //si es que el camion a insertar el nodo no ha salido del depot no habra problemas de factibilidad 
@@ -128,25 +133,38 @@ void relocation(solucion *sol, instancia inst){
         //se elimina el nodo del primer camion 
         new_sol.camiones[idx_cam1].ruta.erase(new_sol.camiones[idx_cam1].ruta.begin()+nodo_idx);
         new_sol.camiones[idx_cam2].ruta.push_back(nod_val);
+        if(new_sol.camiones[idx_cam1].ruta.size() == 1) {
+            new_sol.camiones[idx_cam1].ruta.pop_back();
+        }
     }
     //se inserta en una ruta con mas nodos, ! puede exisitr la posibilidad de infactibilidad 
     else{
         //se ve la factibilidad de insertar el nodo en esa ruta, mientras no sea factible se elige otra ruta al azar 
-        while(!checkCompatibility(new_sol.camiones[idx_cam2], inst.nodos[nod_val], inst)){
+        while(((idx_cam2== idx_cam1)&&(new_sol.camiones[idx_cam2].ruta.size()<=2))||((idx_cam2!=idx_cam1) && (!checkCompatibility(new_sol.camiones[idx_cam2], inst.nodos[nod_val], inst)))){
             idx_cam2 = camiones_idx.back();
             camiones_idx.pop_back();
         }
         //posicion donde insertar el nodo 
-        int nodo_idx_insert = (int)((sol->camiones[idx_cam1].ruta.size()-2)*drand48());
+        nodo_idx_insert = (int)((sol->camiones[idx_cam2].ruta.size()-1)*drand48());
         //ahora existen 2 opciones, que el camion elegido sea el mismo o otro 
         //si es el mismo camion deben ser diferentes posiciones 
         if(idx_cam2 == idx_cam1){
             while(nodo_idx == nodo_idx_insert){
-                nodo_idx_insert = (int)((sol->camiones[idx_cam2].ruta.size()-2)*drand48());
+                nodo_idx_insert = (int)((sol->camiones[idx_cam2].ruta.size()-1)*drand48());
             }
         }
         new_sol.camiones[idx_cam1].ruta.erase(new_sol.camiones[idx_cam1].ruta.begin()+nodo_idx);
-        new_sol.camiones[idx_cam2].ruta.insert(new_sol.camiones[idx_cam2].ruta.begin()+nodo_idx_insert, nod_val);
+        //si queda vacia la ruta le borro el depot
+        if(new_sol.camiones[idx_cam1].ruta.size() == 1) {
+            new_sol.camiones[idx_cam1].ruta.pop_back();
+        }
+        if(!new_sol.camiones[idx_cam2].ruta.empty()){
+            new_sol.camiones[idx_cam2].ruta.insert(new_sol.camiones[idx_cam2].ruta.begin()+nodo_idx_insert, nod_val);
+        }
+        if(new_sol.camiones[idx_cam2].ruta.empty()){
+            new_sol.camiones[idx_cam2].ruta.push_back(nod_val);
+        }
+        
         
     }
     //se regeneran las rutas
@@ -154,7 +172,8 @@ void relocation(solucion *sol, instancia inst){
         regenerateRute(&(*cam), inst);
     }
     solEvaluation(&new_sol, inst);
-}
+    *sol = new_sol;
+    }
 
 
 /*
@@ -192,30 +211,36 @@ Mi: cantidad de iteraciones. (loop interior)
 void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mp, int Mi){
     float T = init_T;
     double randN;
+    float thresh;
     solucion act = *sol, best = *sol, sn;
     //iteraciones en la que la temperatura baja 
     for(int paso = 0; paso < Mp; paso++){
         //iteraciones en que la temperatura se mantiene constante 
+        cout << "--------------------------------Paso" <<paso << "----------------------------" << endl;
+        
         for(int iter = 0; iter < Mi; iter++){
             //se elige un numero aleatorio 
             randN = drand48();
             //se busca un vecino de la solucion actual y se asigna a sn  // solo soluciones factibles hasta ahora 
             sn = search_n(act, inst);
             //me quedo con la nueva solucion si es que es mejor 
+            thresh = exp((act.fitness_pond - sn.fitness_pond)/T);
+           // cout << "thresh " <<thresh << " rand "<< randN<< endl;
             if(sn.fitness_pond < act.fitness_pond){
                 act = sn ;
             }
             //se acpeta una peor solucion dependdiendo del numero aleatorio 
-            else if (randN < exp((act.fitness_pond - sn.fitness_pond)/T)){
+            else if (randN < thresh){
                 act = sn ;
             }
 
             if(act.fitness_pond < best.fitness_pond){
                 best = act ;
+                cout << "Se acutalizo la mejor sol " << endl;
             }
         }
         T *= alpha;
     }
 
-    sol = &best; 
+    *sol = best; 
 }
