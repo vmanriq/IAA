@@ -182,14 +182,14 @@ int main(int argc, char const *argv[])
                                     {1,0,0,0,0}};
     float alpha = atof(argv[1]);
     string fName = argv[2];
-    srand(42);
+    srand(atof(argv[3]));
     cout << "Instancia: " <<fName<< endl;
     cout << "Alpha utilizado: " <<alpha<< endl;
     struct instancia inst = leer_instancia(fName, alpha);
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
-    SAA(inst, &sol, 100, 0.99, 2000, 80);
+    SAA(inst, &sol, atof(argv[4]), atof(argv[5]), atof(argv[6]), atof(argv[7]));
     displaySol(sol, inst);
     return 0;
 }

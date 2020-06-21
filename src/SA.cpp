@@ -69,7 +69,7 @@ void solEvaluation(solucion *sol, instancia inst){
     for(auto cam = sol->camiones.begin(); cam != sol->camiones.end(); cam++){
         camion aux_cam;
         aux_cam.capacidad_restante = inst.capacidad_camiones[idx_cam]; 
-        for(int pos_nod = 0;  pos_nod < cam->ruta.size(); pos_nod++){
+        for(int pos_nod = 0; pos_nod < (int) cam->ruta.size(); pos_nod++){
             //inidice del nodo real 
             idx_nod = cam->ruta[pos_nod];
             //si es que es primer nodo que se visita 
@@ -97,7 +97,7 @@ void solEvaluation(solucion *sol, instancia inst){
 /*Devuelve el indice de un vector que haya salido del depot  */
 int random_cam(vector<camion> camiones){
     vector<int> idxs;
-    for(int i = 0 ; i < camiones.size() ; i++){
+    for(int i = 0 ; i <(int) camiones.size() ; i++){
         if(camiones[i].ruta.size() > 0){
             idxs.push_back(i);
         }
@@ -111,9 +111,8 @@ int random_cam(vector<camion> camiones){
 Extrae el nodo de una ruta y se lo asigna a otra, esto puede generar una nueva ruta si es que no todos los camiones fueron utilizados
 se aceptan soluciones infactibles (?)
  */
-void relocation(solucion *sol, instancia inst){
+int relocation(solucion *sol, instancia inst){
     solucion new_sol = *sol;
-    bool flag = true;
     //se elige un camion al azar  el cual hay salido del depot 
     int idx_cam1 = random_cam(sol->camiones);
     int nodo_idx_insert = 0;
@@ -142,7 +141,8 @@ void relocation(solucion *sol, instancia inst){
         //se ve la factibilidad de insertar el nodo en esa ruta, mientras no sea factible se elige otra ruta al azar 
         while(((idx_cam2== idx_cam1)&&(new_sol.camiones[idx_cam2].ruta.size()<=2))||((idx_cam2!=idx_cam1) && (!checkCompatibility(new_sol.camiones[idx_cam2], inst.nodos[nod_val], inst)))){
             if(camiones_idx.empty()){
-                return;
+                cout << "Movimiento no exitoso " << endl;
+                return 1;
             }
             idx_cam2 = camiones_idx.back();
             camiones_idx.pop_back();
@@ -176,6 +176,7 @@ void relocation(solucion *sol, instancia inst){
     }
     solEvaluation(&new_sol, inst);
     *sol = new_sol;
+    return 0;
     }
 
 
@@ -188,9 +189,13 @@ Se  elige un movimiento aleatorio para crear un vecino de la solucion actual
 solucion search_n (solucion sol, instancia inst){
     solucion new_sol = sol;
     double randNe = drand48();
+    int succes_mov = 1;
     //0.5 de elegir este movimiento 
     if(randNe <= 1){
-        relocation(&new_sol, inst);
+        while(succes_mov == 1){
+            succes_mov = relocation(&new_sol, inst);
+        }
+        
     }
  /*    else if (randNe < 0.66){
          exchange(&new_sol, inst);
@@ -244,6 +249,6 @@ void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mi, int 
         }
         
     }
-        
+    cout << "Temperatura final: " << T << endl;
     *sol = best; 
 }
