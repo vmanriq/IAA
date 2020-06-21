@@ -141,6 +141,9 @@ void relocation(solucion *sol, instancia inst){
     else{
         //se ve la factibilidad de insertar el nodo en esa ruta, mientras no sea factible se elige otra ruta al azar 
         while(((idx_cam2== idx_cam1)&&(new_sol.camiones[idx_cam2].ruta.size()<=2))||((idx_cam2!=idx_cam1) && (!checkCompatibility(new_sol.camiones[idx_cam2], inst.nodos[nod_val], inst)))){
+            if(camiones_idx.empty()){
+                return;
+            }
             idx_cam2 = camiones_idx.back();
             camiones_idx.pop_back();
         }
