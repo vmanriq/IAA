@@ -168,6 +168,10 @@ void displaySol(solucion sol, instancia inst){
 
 }
 
+/* 
+argv
+[alpha, instancia, seed, T, decrecimiento_T, iter,]
+*/
 int main(int argc, char const *argv[])
 {
     vector<vector<int>> incompatibilidad ={
@@ -185,7 +189,7 @@ int main(int argc, char const *argv[])
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
-    SAA(inst, &sol, 100, 0.9, 100, 100);
+    SAA(inst, &sol, 100, 0.99, 2000, 80);
     displaySol(sol, inst);
     return 0;
 }

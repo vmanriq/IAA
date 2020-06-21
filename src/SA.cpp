@@ -211,39 +211,39 @@ Mi: cantidad de iteraciones. (loop interior)
 
  */
 
-void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mp, int Mi){
+void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mi, int coolDown){
     float T = init_T;
     double randN;
     float thresh;
     solucion act = *sol, best = *sol, sn;
-    //iteraciones en la que la temperatura baja 
-    for(int paso = 0; paso < Mp; paso++){
-        //iteraciones en que la temperatura se mantiene constante 
-        cout << "--------------------------------Paso" <<paso << "----------------------------" << endl;
-        
-        for(int iter = 0; iter < Mi; iter++){
-            //se elige un numero aleatorio 
-            randN = drand48();
-            //se busca un vecino de la solucion actual y se asigna a sn  // solo soluciones factibles hasta ahora 
-            sn = search_n(act, inst);
-            //me quedo con la nueva solucion si es que es mejor 
-            thresh = exp((act.fitness_pond - sn.fitness_pond)/T);
-           // cout << "thresh " <<thresh << " rand "<< randN<< endl;
-            if(sn.fitness_pond < act.fitness_pond){
-                act = sn ;
-            }
-            //se acpeta una peor solucion dependdiendo del numero aleatorio 
-            else if (randN < thresh){
-                act = sn ;
-            }
-
-            if(act.fitness_pond < best.fitness_pond){
-                best = act ;
-                cout << "Se acutalizo la mejor sol " << endl;
-            }
+    //iteraciones en la que la temperatura baja       
+    for(int iter = 0; iter < Mi; iter++){
+        cout << "Iteracion " << iter << endl;
+        //se elige un numero aleatorio 
+        randN = drand48();
+        //se busca un vecino de la solucion actual y se asigna a sn  // solo soluciones factibles hasta ahora 
+        sn = search_n(act, inst);
+        //me quedo con la nueva solucion si es que es mejor 
+        thresh = exp((act.fitness_pond - sn.fitness_pond)/T);
+        // cout << "thresh " <<thresh << " rand "<< randN<< endl;
+        if(sn.fitness_pond < act.fitness_pond){
+            act = sn ;
         }
-        T *= alpha;
-    }
+        //se acpeta una peor solucion dependdiendo del numero aleatorio 
+        else if (randN < thresh){
+            act = sn ;
+        }
 
+        if(act.fitness_pond < best.fitness_pond){
+            best = act ;
+            cout << "Se acutalizo la mejor sol: fit =  " << best.fitness_pond << endl;
+        }
+        if(iter%coolDown == 0){
+            T *= alpha;
+            cout << "Se actualiza la temperatura: T = " << T << endl;
+        }
+        
+    }
+        
     *sol = best; 
 }
