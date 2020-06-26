@@ -154,17 +154,18 @@ solucion initSol(instancia inst, vector<vector<int>> incompatibilidad){
 void displaySol(solucion sol, instancia inst){
     struct camion cam;
     cout << "Las rutas son: "<< endl;
-    for(int i = 0; i < (int)sol.camiones.size();i++){
-        cam = sol.camiones[i];
-        cout<< "La ruta del camion " << i << " es : ";
-        for(int j = 0 ; j < (int)cam.ruta.size(); j++){
-            //cout << inst.nodos[cam.ruta[j]].id << " ";
-            cout << cam.ruta[j] << " ";
-        }
-        cout << endl;
-    }
-    cout << "(Z1) Riesgo:  " << sol.fitness_riesgo<<endl;
-    cout << "(Z2) Distancia:  " << sol.fitness_camino<<endl;
+    // for(int i = 0; i < (int)sol.camiones.size();i++){
+    //     cam = sol.camiones[i];
+    //     cout<< "La ruta del camion " << i << " es : ";
+    //     for(int j = 0 ; j < (int)cam.ruta.size(); j++){
+    //         //cout << inst.nodos[cam.ruta[j]].id << " ";
+    //         cout << cam.ruta[j] << " ";
+    //     }
+    //     cout << endl;
+    // }
+    cout << "(Z1) Riesgo SA:  " << sol.fitness_riesgo<<endl;
+    cout << "(Z2) Distancia SA:  " << sol.fitness_camino<<endl;
+    cout << "Pond Fitness SA: " << sol.fitness_pond << endl;
 
 }
 
@@ -183,12 +184,17 @@ int main(int argc, char const *argv[])
     float alpha = atof(argv[1]);
     string fName = argv[2];
     srand(atof(argv[3]));
+    cout << "\n------------------------------------------- \n ";
     cout << "Instancia: " <<fName<< endl;
     cout << "Alpha utilizado: " <<alpha<< endl;
     struct instancia inst = leer_instancia(fName, alpha);
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
     struct solucion sol = initSol(inst, incompatibilidad);
+
+    cout << "(Z1) Riesgo GR:  " << sol.fitness_riesgo<<endl;
+    cout << "(Z2) Distancia GR:  " << sol.fitness_camino<<endl;
+    cout << "Pond Fitness GR: " << sol.fitness_pond <<endl <<  endl;
     SAA(inst, &sol, atof(argv[4]), atof(argv[5]), atof(argv[6]), atof(argv[7]));
     displaySol(sol, inst);
     return 0;

@@ -141,7 +141,7 @@ int relocation(solucion *sol, instancia inst){
         //se ve la factibilidad de insertar el nodo en esa ruta, mientras no sea factible se elige otra ruta al azar 
         while(((idx_cam2== idx_cam1)&&(new_sol.camiones[idx_cam2].ruta.size()<=2))||((idx_cam2!=idx_cam1) && (!checkCompatibility(new_sol.camiones[idx_cam2], inst.nodos[nod_val], inst)))){
             if(camiones_idx.empty()){
-                cout << "Movimiento no exitoso " << endl;
+             //   cout << "Movimiento no exitoso " << endl;
                 return 1;
             }
             idx_cam2 = camiones_idx.back();
@@ -177,7 +177,7 @@ int relocation(solucion *sol, instancia inst){
     solEvaluation(&new_sol, inst);
     *sol = new_sol;
     return 0;
-    }
+}
 
 
 /*
@@ -221,9 +221,11 @@ void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mi, int 
     double randN;
     float thresh;
     solucion act = *sol, best = *sol, sn;
-    //iteraciones en la que la temperatura baja       
+    //iteraciones en la que la temperatura baja 
+    int mejora = 0;
+    
     for(int iter = 0; iter < Mi; iter++){
-        cout << "Iteracion " << iter << endl;
+        //cout << "% " << iter*100/Mi <<"\r" ;
         //se elige un numero aleatorio 
         randN = drand48();
         //se busca un vecino de la solucion actual y se asigna a sn  // solo soluciones factibles hasta ahora 
@@ -241,14 +243,17 @@ void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mi, int 
 
         if(act.fitness_pond < best.fitness_pond){
             best = act ;
-            cout << "Se acutalizo la mejor sol: fit =  " << best.fitness_pond << endl;
+            //cout << "Se acutalizo la mejor sol: fit =  " << best.fitness_pond << endl;
+            mejora+=1;
         }
         if(iter%coolDown == 0){
             T *= alpha;
-            cout << "Se actualiza la temperatura: T = " << T << endl;
+           // cout << "Se actualiza la temperatura: T = " << T << endl;
         }
         
     }
-    cout << "Temperatura final: " << T << endl;
+    //cout << "Temperatura final: " << T << endl;
+    cout << "Veces que se mejoro la solucion "<< mejora << endl;
+    cout << "Temperatura final " << T << endl;  
     *sol = best; 
 }
