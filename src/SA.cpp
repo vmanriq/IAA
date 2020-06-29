@@ -225,7 +225,7 @@ void SAA (instancia inst, solucion *sol, float init_T, float alpha, int Mi, int 
     int mejora = 0;
     
     for(int iter = 0; iter < Mi; iter++){
-        //cout << "% " << iter*100/Mi <<"\r" ;
+        cout << "% " << iter*100/Mi <<"\r" ;
         //se elige un numero aleatorio 
         randN = drand48();
         //se busca un vecino de la solucion actual y se asigna a sn  // solo soluciones factibles hasta ahora 

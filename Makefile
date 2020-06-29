@@ -1,5 +1,5 @@
 build:
-	g++ -g -Wall src/main.cpp -o hazmat
+	g++  -Wall src/main.cpp -o hazmat
 
 example:
 	./hazmat 0.5 Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat 42 300 0.95 5000 15
