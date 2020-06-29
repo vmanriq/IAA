@@ -7,7 +7,7 @@
  ```
  2. Ejecutar por:
  ```bash
-    ./hazmat {alpha} {instancia} {seed} {T_init} {n_iter} {L}
+    ./hazmat {alpha} {instancia} {seed} {T_init} {alpha_cooldown} {n_iter} {L}
  ```
 
  donde:
@@ -15,6 +15,7 @@
  + __instancia__: es la ruta donde se encuentra la instancia a probar.
  + __seed__: numero de la seed utilizada para la generacion de numeros aleatorios 
  + __T_init__: temperatura inicial del algoritmo SA 
+ + __alpha_cooldown__: Factor de enfriamiento de la temperatura 
  + __n_iter___ numero de iteraciones del algoritmo SA
  + __L__: Cada cuantas iteraciones la temperatura se actualizara 
  
