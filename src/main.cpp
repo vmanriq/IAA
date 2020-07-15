@@ -47,11 +47,10 @@ void evalSol(vector<camion> camiones, solucion *sol, instancia inst)
 
 int getRandomNode(camion cam, int idx_node, vector<int> nodos_idx, instancia inst, int lenL)
 {
-    int best_n = -1;
-    float best_fitness = numeric_limits<float>::max(), alpha = inst.alpha;
     float act_fitness;
     int pos;
     vector<tuple<float, int>> RCL;
+    float alpha = inst.alpha;
     //recorro los nodos disponibles
     for (auto i = nodos_idx.begin(); i != nodos_idx.end(); i++)
     {
@@ -61,9 +60,15 @@ int getRandomNode(camion cam, int idx_node, vector<int> nodos_idx, instancia ins
             continue;
         }
         //se calcula la fitness hacia el nodo *i
-        act_fitness = (alpha * inst.normRiesgos[cam.riesgo_max - 1][*i][idx_node] +
-                       (1 - alpha) * inst.normDistancias[cam.riesgo_max - 1][*i][idx_node]);
-
+        if (cam.riesgo_max != 0)
+        {
+            act_fitness = (alpha * inst.normRiesgos[cam.riesgo_max - 1][*i][idx_node] +
+                           (1 - alpha) * inst.normDistancias[cam.riesgo_max - 1][*i][idx_node]);
+        }
+        else
+        {
+            act_fitness = alpha * inst.distancia_depot_norm[*i];
+        }
         RCL.push_back(make_tuple(act_fitness, *i));
     }
     //se ordena  segun fitness, ascendente
@@ -73,7 +78,7 @@ int getRandomNode(camion cam, int idx_node, vector<int> nodos_idx, instancia ins
     }
     sort(RCL.begin(), RCL.end());
     //se selecciona un nodo aleatoria deacuerdo al largo de la lista
-    pos = (int)((lenL - 1) * drand48());
+    pos = (int)((min(lenL, (int)RCL.size()) - 1) * drand48());
     return get<1>(RCL[pos]);
 }
 
@@ -88,7 +93,7 @@ void bestInsertionH(instancia inst, solucion *sol, int lenL)
     struct camion aux_cam;
     int idx_nodo;
     //se ordenan los nodos de menor a mayor riesgo
-    vector<int> nodos_idx = (inst.nodos.size());
+    vector<int> nodos_idx((int)inst.nodos.size());
     iota(nodos_idx.begin(), nodos_idx.end(), 0);
     //se elimina el indice del depot
     nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), 0), nodos_idx.end());
@@ -109,7 +114,8 @@ void bestInsertionH(instancia inst, solucion *sol, int lenL)
         //se le asigna un  nodo aleatorio segun la heuristica
         idx_nodo = getRandomNode(aux_cam, 0, nodos_idx, inst, lenL);
         //se visita este nodo
-        nodos_idx.pop_back();
+        visitarNodo(&aux_cam, inst.nodos[idx_nodo]);
+        nodos_idx.erase(remove(nodos_idx.begin(), nodos_idx.end(), idx_nodo), nodos_idx.end());
         //mientras la ruta de este camion sea factible
         while (true)
         {
@@ -147,20 +153,30 @@ solucion initSol(instancia inst)
         camiones.push_back(cam);
     }
     sol.camiones = camiones;
+    return sol;
 }
 
 solucion GRASP(instancia inst, int lenList, int gStop, float initT, float alpha, int Mi, int coolDown)
 {
     struct solucion sol;
+    struct solucion best_sol;
 
+    float best_fit = 20000;
     //main loop greedy
     for (int iter = 0; iter < gStop; iter++)
     {
         sol = initSol(inst);
         bestInsertionH(inst, &sol, lenList);
-        //sa
+        SAA(inst, &sol, initT, alpha, Mi, coolDown);
+        if (iter == 0 || sol.fitness_pond < best_fit)
+        {
+            best_sol = sol;
+            best_fit = sol.fitness_pond;
+            cout << "UPDATE SOL" << endl;
+        }
         // mejor sol ?
     }
+    return best_sol;
 }
 
 void displaySol(solucion sol, instancia inst)
@@ -195,16 +211,19 @@ int main(int argc, char const *argv[])
         {0, 0, 0, 1, 0},
         {0, 0, 1, 0, 0},
         {1, 0, 0, 0, 0}};
-    float alpha = atof(argv[1]);
-    string fName = argv[2];
-    srand(atof(argv[3]));
+    // float alpha = atof(argv[1]);
+    // string fName = argv[2];
+    //srand(atof(argv[3]));
+    string fName = "Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat";
+    float alpha = 0.1;
+    srand(90);
     cout << "\n------------------------------------------- \n ";
     cout << "Instancia: " << fName << endl;
     cout << "Alpha utilizado: " << alpha << endl;
     struct instancia inst = leer_instancia(fName, alpha);
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
-    struct solucion sol = GRASP(inst, lenList, gStop, initT, alpha, Mi, coolDown);
+    struct solucion sol = GRASP(inst, 15, 10, 300, 0.95, 5000, 15);
 
     displaySol(sol, inst);
     return 0;
