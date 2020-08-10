@@ -161,7 +161,7 @@ solucion GRASP(instancia inst, int lenList, int gStop, float initT, float alpha,
     struct solucion sol;
     struct solucion best_sol;
 
-    float best_fit = 20000;
+    float best_fit = numeric_limits<float>::max();
     //main loop greedy
     for (int iter = 0; iter < gStop; iter++)
     {
@@ -172,7 +172,7 @@ solucion GRASP(instancia inst, int lenList, int gStop, float initT, float alpha,
         {
             best_sol = sol;
             best_fit = sol.fitness_pond;
-            cout << "UPDATE SOL" << endl;
+            //cout << "UPDATE SOL" << endl;
         }
         // mejor sol ?
     }
@@ -182,7 +182,7 @@ solucion GRASP(instancia inst, int lenList, int gStop, float initT, float alpha,
 void displaySol(solucion sol, instancia inst)
 {
     struct camion cam;
-    cout << "Las rutas son: " << endl;
+    /*cout << "Las rutas son: " << endl;
     for (int i = 0; i < (int)sol.camiones.size(); i++)
     {
         cam = sol.camiones[i];
@@ -193,7 +193,7 @@ void displaySol(solucion sol, instancia inst)
             cout << cam.ruta[j] << " ";
         }
         cout << endl;
-    }
+    }*/
     cout << "(Z1) Riesgo SA:  " << sol.fitness_riesgo << endl;
     cout << "(Z2) Distancia SA:  " << sol.fitness_camino << endl;
     cout << "Pond Fitness SA: " << sol.fitness_pond << endl;
@@ -211,19 +211,16 @@ int main(int argc, char const *argv[])
         {0, 0, 0, 1, 0},
         {0, 0, 1, 0, 0},
         {1, 0, 0, 0, 0}};
-    // float alpha = atof(argv[1]);
-    // string fName = argv[2];
-    //srand(atof(argv[3]));
-    string fName = "Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat";
-    float alpha = 0.1;
-    srand(90);
+    float alpha = atof(argv[1]);
+    string fName = argv[2];
+    srand(atof(argv[3]));
     cout << "\n------------------------------------------- \n ";
     cout << "Instancia: " << fName << endl;
     cout << "Alpha utilizado: " << alpha << endl;
     struct instancia inst = leer_instancia(fName, alpha);
     inst.incompatibilidad = incompatibilidad;
     inst.alpha = alpha;
-    struct solucion sol = GRASP(inst, 15, 10, 300, 0.95, 5000, 15);
+    struct solucion sol = GRASP(inst, atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atoi(argv[8]), atoi(argv[9]));
 
     displaySol(sol, inst);
     return 0;

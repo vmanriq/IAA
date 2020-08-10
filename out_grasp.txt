@@ -1,0 +1,544 @@
+for zone in 1 2 3 4 5 6 7; do \
+	for alpha in 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1; do \
+		./hazmat $alpha Instances/peligro-mezcla4-min-riesgo-zona$zone-2k-AE.2.hazmat 42 15 10 300 0.95 5000 15;\
+	done ;\
+done
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  868533
+(Z2) Distancia SA:  223878
+Pond Fitness SA: 2.14636
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  689894
+(Z2) Distancia SA:  222318
+Pond Fitness SA: 2.2233
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  641377
+(Z2) Distancia SA:  224361
+Pond Fitness SA: 2.32752
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  618791
+(Z2) Distancia SA:  247872
+Pond Fitness SA: 2.60938
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  644829
+(Z2) Distancia SA:  233484
+Pond Fitness SA: 2.56533
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  617557
+(Z2) Distancia SA:  233769
+Pond Fitness SA: 2.59204
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  591271
+(Z2) Distancia SA:  238647
+Pond Fitness SA: 2.60639
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  577316
+(Z2) Distancia SA:  239983
+Pond Fitness SA: 2.62201
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  520743
+(Z2) Distancia SA:  271504
+Pond Fitness SA: 2.5181
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  545664
+(Z2) Distancia SA:  295683
+Pond Fitness SA: 2.63829
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona1-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  518434
+(Z2) Distancia SA:  357050
+Pond Fitness SA: 2.44832
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  1.54145e+06
+(Z2) Distancia SA:  161878
+Pond Fitness SA: 1.12903
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  1.22864e+06
+(Z2) Distancia SA:  161178
+Pond Fitness SA: 1.51716
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  1.09151e+06
+(Z2) Distancia SA:  167694
+Pond Fitness SA: 1.81193
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  947090
+(Z2) Distancia SA:  184144
+Pond Fitness SA: 1.90382
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  928401
+(Z2) Distancia SA:  198936
+Pond Fitness SA: 2.18784
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  950830
+(Z2) Distancia SA:  194448
+Pond Fitness SA: 2.43722
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  906580
+(Z2) Distancia SA:  212092
+Pond Fitness SA: 2.62427
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  914771
+(Z2) Distancia SA:  204575
+Pond Fitness SA: 2.82683
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  864244
+(Z2) Distancia SA:  217113
+Pond Fitness SA: 2.91696
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  868398
+(Z2) Distancia SA:  235859
+Pond Fitness SA: 3.11848
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona2-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  880163
+(Z2) Distancia SA:  285548
+Pond Fitness SA: 3.32318
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  443997
+(Z2) Distancia SA:  98072
+Pond Fitness SA: 1.4563
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  379934
+(Z2) Distancia SA:  98689
+Pond Fitness SA: 1.53332
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  376349
+(Z2) Distancia SA:  98818
+Pond Fitness SA: 1.59353
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.65129
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.69981
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.74833
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.79685
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.84537
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.89389
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  362366
+(Z2) Distancia SA:  97910
+Pond Fitness SA: 1.94241
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona3-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  345053
+(Z2) Distancia SA:  139460
+Pond Fitness SA: 1.89581
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  1.47349e+06
+(Z2) Distancia SA:  123168
+Pond Fitness SA: 1.08191
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  1.00438e+06
+(Z2) Distancia SA:  114346
+Pond Fitness SA: 1.3687
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  1.10873e+06
+(Z2) Distancia SA:  150800
+Pond Fitness SA: 1.99116
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  848425
+(Z2) Distancia SA:  155422
+Pond Fitness SA: 2.05728
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  820930
+(Z2) Distancia SA:  156799
+Pond Fitness SA: 2.30998
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  835636
+(Z2) Distancia SA:  154822
+Pond Fitness SA: 2.56496
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  895023
+(Z2) Distancia SA:  175400
+Pond Fitness SA: 3.08459
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  844316
+(Z2) Distancia SA:  159309
+Pond Fitness SA: 3.11842
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  886640
+(Z2) Distancia SA:  183969
+Pond Fitness SA: 3.56637
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  798203
+(Z2) Distancia SA:  170301
+Pond Fitness SA: 3.4592
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona4-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  863438
+(Z2) Distancia SA:  197011
+Pond Fitness SA: 3.98169
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  909767
+(Z2) Distancia SA:  104540
+Pond Fitness SA: 2.29749
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  712785
+(Z2) Distancia SA:  106546
+Pond Fitness SA: 2.49997
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  711275
+(Z2) Distancia SA:  101238
+Pond Fitness SA: 2.66251
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  681913
+(Z2) Distancia SA:  107617
+Pond Fitness SA: 2.74841
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  681913
+(Z2) Distancia SA:  107617
+Pond Fitness SA: 2.86547
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  719550
+(Z2) Distancia SA:  113932
+Pond Fitness SA: 3.1948
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  677973
+(Z2) Distancia SA:  102167
+Pond Fitness SA: 3.09918
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  697523
+(Z2) Distancia SA:  103756
+Pond Fitness SA: 3.28232
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  681758
+(Z2) Distancia SA:  113849
+Pond Fitness SA: 3.40257
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  653256
+(Z2) Distancia SA:  118623
+Pond Fitness SA: 3.36846
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona5-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  648943
+(Z2) Distancia SA:  132307
+Pond Fitness SA: 3.3953
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  492830
+(Z2) Distancia SA:  101196
+Pond Fitness SA: 2.9292
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  623542
+(Z2) Distancia SA:  85426
+Pond Fitness SA: 2.9759
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  526080
+(Z2) Distancia SA:  98724
+Pond Fitness SA: 3.11625
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  535822
+(Z2) Distancia SA:  89685
+Pond Fitness SA: 3.11861
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  484765
+(Z2) Distancia SA:  105703
+Pond Fitness SA: 3.23299
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  492171
+(Z2) Distancia SA:  120688
+Pond Fitness SA: 3.30837
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  492873
+(Z2) Distancia SA:  111112
+Pond Fitness SA: 3.28688
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  438588
+(Z2) Distancia SA:  123163
+Pond Fitness SA: 3.07312
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  460753
+(Z2) Distancia SA:  114495
+Pond Fitness SA: 3.1786
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  442933
+(Z2) Distancia SA:  130554
+Pond Fitness SA: 3.085
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona6-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  441830
+(Z2) Distancia SA:  158256
+Pond Fitness SA: 2.9927
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0
+(Z1) Riesgo SA:  192116
+(Z2) Distancia SA:  91340
+Pond Fitness SA: 1.33145
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.1
+(Z1) Riesgo SA:  174089
+(Z2) Distancia SA:  91629
+Pond Fitness SA: 1.32569
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.2
+(Z1) Riesgo SA:  174132
+(Z2) Distancia SA:  91645
+Pond Fitness SA: 1.31311
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.3
+(Z1) Riesgo SA:  135981
+(Z2) Distancia SA:  95526
+Pond Fitness SA: 1.27744
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.4
+(Z1) Riesgo SA:  135981
+(Z2) Distancia SA:  95526
+Pond Fitness SA: 1.22986
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.5
+(Z1) Riesgo SA:  135981
+(Z2) Distancia SA:  95526
+Pond Fitness SA: 1.18228
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.6
+(Z1) Riesgo SA:  127011
+(Z2) Distancia SA:  100372
+Pond Fitness SA: 1.12307
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.7
+(Z1) Riesgo SA:  127011
+(Z2) Distancia SA:  100372
+Pond Fitness SA: 1.06283
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.8
+(Z1) Riesgo SA:  127011
+(Z2) Distancia SA:  100372
+Pond Fitness SA: 1.00258
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 0.9
+(Z1) Riesgo SA:  125811
+(Z2) Distancia SA:  100372
+Pond Fitness SA: 0.940469
+
+------------------------------------------- 
+ Instancia: Instances/peligro-mezcla4-min-riesgo-zona7-2k-AE.2.hazmat
+Alpha utilizado: 1
+(Z1) Riesgo SA:  125811
+(Z2) Distancia SA:  100372
+Pond Fitness SA: 0.873754
